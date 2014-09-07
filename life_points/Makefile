@@ -10,4 +10,4 @@ life: $(OBJ)
 		gcc -o $@ $^ $(CFLAGS) $(LIBS)
 
 clean:
-		rm -rf *.o life_points
+		rm -rf *.o life
