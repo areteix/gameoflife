@@ -298,7 +298,7 @@ int main (int argc, char * argv[]){
     gettimeofday(&start_time, 0);
     for(i=0; i<1000; i++){
         w = evolve(w, num_threads);
-//        print(w);
+        print(w);
         if(i == 60) {
             create_pulsar(w, 5, 10);
         }

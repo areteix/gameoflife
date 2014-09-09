@@ -8,10 +8,10 @@ void print(world w){
         for(j=0; j<w.size.cols; j++){
             if(w.space[i][j] == alive){
                 //                printf("\u25A0");
-                printf("*");
+                printf("#");
             }
             else{
-                printf(".");
+                printf(" ");
             }
         }
         printf("\n");

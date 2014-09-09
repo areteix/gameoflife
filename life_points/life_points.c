@@ -75,7 +75,7 @@ void display_world(sp_mat world){
         while(curr_col != NULL){
             while(i<curr_row->row_num){
                 while(j<curr_col->col_num){
-                    printf(".");
+                    printf(" ");
                     j++;
                 }
                 printf("\n");
@@ -83,10 +83,10 @@ void display_world(sp_mat world){
                 j=0;
             }
             while(j < curr_col->col_num){
-                printf(".");
+                printf(" ");
                 j++;
             }
-            printf("*");
+            printf("#");
             j++;
             curr_col = curr_col->next;
         }
@@ -327,7 +327,7 @@ int main(int argc, char *argv[]){
 
     for(t=0;t<100;t++){
         evolve(&world, &active_region, num_threads);
-//        display_world(world);
+        display_world(world);
 //        print(world);
     }
     gettimeofday(&end_time, 0);
