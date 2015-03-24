@@ -1,13 +1,16 @@
 CC=gcc
-CFLAGS=-I. -g
+CFLAGS=-I. -g -O3
 DEPS = helper.h
 OBJ = helper.o life.o
 LIBS = -lpthread
 %.o: %.c $(DEPS)
 		$(CC) -c -o $@ $< $(CFLAGS)
 
-life: $(OBJ)
+life_matrix_malloc: $(OBJ)
 		gcc -o $@ $^ $(CFLAGS) $(LIBS)
 
+life_matrix_tcmalloc: $(OBJ)
+		gcc -o $@ $^ $(CFLAGS) $(LIBS) -ltcmalloc
+
 clean:
-		rm -rf *.o life
+		rm -rf *.o life_matrix_malloc life_matrix_tcmalloc

@@ -205,7 +205,7 @@ void * process_active_cell(void *args){
     }
 }
 
-void evolve(sp_mat* world, sp_mat *active_region, int num_threads){
+void evolve(sp_mat* world, sp_mat *active_region, int num_threads, int manage_active){
     int r, c, n, wait_for=0, i;
     sp_mat spawn = NULL;
     sp_mat kill = NULL;
@@ -255,7 +255,9 @@ void evolve(sp_mat* world, sp_mat *active_region, int num_threads){
     }
     free(pac_threads);
     free(pac_params);
-    delete_mat(active_region);
+    if(manage_active > 0){
+        delete_mat(active_region);
+    }
     psk_params[0].world = world;
     psk_params[0].active_region = active_region;
     psk_params[0].in_coords = spawn;
@@ -306,35 +308,42 @@ void parse_world(sp_mat *world, char* filename){
 }
 
 int main(int argc, char *argv[]){
-    int t, num_threads=1;
+    int t, num_threads=1, manage_active = 1, num_gen = 10;
     sp_mat world = NULL;
     sp_mat active_region = NULL;
-    if(argc >= 2){
-        num_threads = atoi(argv[1]);
+    if(argc < 5){
+        printf("%s <num_threads> <in_file> <manage_active> <num_gen>\n", argv[0]);
+        return 0;
     }
-    if(argc == 3){
-        parse_world(&world, argv[2]);
-    }
-    else{
+    num_threads = atoi(argv[1]);
+
+    if(strcmp(argv[2], "none") == 0){
         seed(&world);
     }
+    else{
+        parse_world(&world, argv[2]);
+    }
+    manage_active = atoi(argv[3]);
+    num_gen = atoi(argv[4]);
+
     initial_active_region(world, &active_region);
+
  //   print(world);
  //   printf("\n");
  //   print(active_region);
     struct timeval start_time, end_time, diff_time;
     gettimeofday(&start_time, 0);
 
-    for(t=0;t<100;t++){
-        evolve(&world, &active_region, num_threads);
-        display_world(world);
+    for(t=0;t<num_gen;t++){
+        evolve(&world, &active_region, num_threads, manage_active);
+//        display_world(world);
 //        print(world);
     }
     gettimeofday(&end_time, 0);
     if(timeval_subtract(&diff_time, &end_time, &start_time) != 1){
-        printf("Time elapsed: %d us\n", diff_time.tv_sec * 1000000 + diff_time.tv_usec);
+        printf("num_threads: %d man_act: %d num_gen: %d time: %ld us\n", num_threads, manage_active, num_gen, diff_time.tv_sec * 1000000 + diff_time.tv_usec);
     }
-    display_world(world);
+//    display_world(world);
     delete_mat(&world);
     delete_mat(&active_region);
 }
