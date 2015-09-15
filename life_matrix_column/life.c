@@ -19,8 +19,8 @@ typedef struct _check_bound_params {
 } check_bound_params;
 
 typedef struct _evolve_param {
-    int start_row;
-    int end_row;
+    int start_col;
+    int end_col;
     world *w;
     world *nw;
 } evolve_param_t;
@@ -171,8 +171,8 @@ void * check_boundary(void *cbparams) {
 void * process_world_slice(void* args){
     int i, j, n;
     evolve_param_t *evp = (evolve_param_t *) args;
-    for(i = evp->start_row; i < evp->end_row; i++){
-        for(j=0; j < evp->w->size.cols; j++){
+    for(i = 0; i < evp->w->size.rows; i++){
+        for(j=evp->start_col; j < evp->end_col; j++){
             n = get_neigh(evp->w, i, j);
             if(evp->w->space[i][j]==alive){
                 if(n<2 || n>3){
@@ -203,14 +203,14 @@ world evolve(world w, int num_threads) {
     world newworld;
     world nextgen = create_world(w.size);
     // threading and shared data
-    num_threads = num_threads < w.size.rows ? num_threads : w.size.rows;
+    num_threads = num_threads < w.size.cols ? num_threads : w.size.cols;
     for(i=0; i<num_threads; i++){
-        evp[i].start_row = i * (w.size.rows / num_threads);
+        evp[i].start_col = i * (w.size.cols / num_threads);
         if(i==num_threads-1) {
-            evp[i].end_row = w.size.rows;
+            evp[i].end_col = w.size.cols;
         }
         else {
-            evp[i].end_row = (i+1) * (w.size.rows / num_threads);
+            evp[i].end_col = (i+1) * (w.size.cols / num_threads);
         }
         evp[i].w = &w;
         evp[i].nw = &nextgen;
