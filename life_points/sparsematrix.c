@@ -2,6 +2,7 @@
 
 void insert_col_entry(row_entry* row, int c){
     col_entry * curr_col = row->columns;
+    int begin = 0;
     while(curr_col != NULL){
         if(curr_col->col_num == c){
             return;
@@ -15,6 +16,7 @@ void insert_col_entry(row_entry* row, int c){
             }
         }
         else{
+            begin = 1;
             break;
         }
     }
@@ -25,13 +27,20 @@ void insert_col_entry(row_entry* row, int c){
         new_col->next = curr_col;
     }
     else {
-        new_col->next = curr_col->next;
-        curr_col->next = new_col;
+        if(begin == 1){
+            new_col->next = curr_col;
+            row->columns = new_col;
+        }
+        else{
+            new_col->next = curr_col->next;
+            curr_col->next = new_col;
+        }
     }
 }
 
 void insert_coord(sp_mat *m, int r, int c){
     row_entry * curr_row = *m;
+    int begin = 0;
     while(curr_row != NULL){
         if(curr_row->row_num == r){
             insert_col_entry(curr_row, c);
@@ -46,6 +55,7 @@ void insert_coord(sp_mat *m, int r, int c){
             }
         }
         else{
+            begin = 1;
             break;
         }
     }
@@ -58,8 +68,14 @@ void insert_coord(sp_mat *m, int r, int c){
         *m = curr_row;
     }
     else{
-        new_row->next = curr_row->next;
-        curr_row->next = new_row;
+        if(begin == 1){
+            new_row->next = curr_row;
+            *m = new_row;
+        }
+        else{
+            new_row->next = curr_row->next;
+            curr_row->next = new_row;
+        }
     }
     insert_col_entry(new_row, c);
 }
